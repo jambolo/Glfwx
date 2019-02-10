@@ -18,7 +18,7 @@ class Window
 public:
 
     //! Constructor.
-    Window(int width, int height, std::string const & name, void * monitor, void * share);
+    Window(int width, int height, std::string const & name, void * monitor = nullptr, void * share = nullptr);
 
     //! Destructor.
     virtual ~Window();

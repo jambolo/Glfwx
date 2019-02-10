@@ -9,13 +9,13 @@ namespace Glfwx
 {
 //!
 //! @return     false if the initialization failed
-bool start()
+bool init()
 {
     int rv = glfwInit();
     return rv != GLFW_FALSE;
 }
 
-void finish()
+void terminate()
 {
     glfwTerminate();
 }

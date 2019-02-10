@@ -11,7 +11,7 @@
 namespace Glfwx
 {
 
-Window::Window(int width, int height, std::string const & name, void * monitor, void * share)
+Window::Window(int width, int height, std::string const & name, void * monitor /*= nullptr*/, void * share /*= nullptr*/)
         : width_(width)
         , height_(height)
         , name_(name)

@@ -9,10 +9,10 @@
 namespace Glfwx
 {
 //! Initializes GLFW.
-bool start();
+bool init();
 
 //! Shuts down GLFW.
-void finish();
+void terminate();
 
 //! Returns the required extensions.
 std::vector<char const *> requiredInstanceExtensions();
