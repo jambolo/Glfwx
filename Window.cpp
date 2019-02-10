@@ -1,9 +1,13 @@
 #include "Glfwx/Window.h"
 
+#include "Glfwx/Enumerations.h"
+
 #include <GLFW/glfw3.h>
 
+#include <stdexcept>
 #include <string>
 #include <vector>
+
 namespace Glfwx
 {
 
@@ -31,13 +35,25 @@ Window::~Window()
         return 0;
     }
 
-    int Window::getAttribute(int attr) const;
+    int Window::getAttribute(int attr) const
+    {
+        return 0;
+    }
 
-    void Window::size(int & width, int & height) const;
+    void Window::size(int & width, int & height) const
+    {
 
-    void Window::frameBufferSize(int & width, int & height) const;
+    }
 
-    void Window::setIcon();
+    void Window::frameBufferSize(int & width, int & height) const
+    {
+
+    }
+
+    void Window::setIcon()
+    {
+
+    }
 
     void Window::run()
     {
@@ -47,7 +63,7 @@ Window::~Window()
         }
     }
 
-    static void Window::hint(Hint id, int value)
+    void Window::hint(Hint id, int value)
     {
         glfwWindowHint((int)id, value);
     }

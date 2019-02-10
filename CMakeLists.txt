@@ -20,26 +20,27 @@ endif()
 #set(${PROJECT_NAME}_VERSION_MINOR 1)
 #configure_file("${PROJECT_SOURCE_DIR}/Version.h.in" "${PROJECT_BINARY_DIR}/Version.h")
 
-find_path(glfw_DIR "lib/glfw3.lib" PATHS "C:/Program Files/glfw" CACHE)
-if (glfw_DIR)
-    set(glfw_LIBRARIES "${glfw_DIR}/lib")
-    set(glfw_INCLUDE_DIRS "${glfw_DIR}/include")
-    message(STATUS "glfw_DIR = ${glfw_DIR}")
-    message(STATUS "glfw_LIBRARIES = ${glfw_LIBRARIES}")
-    message(STATUS "glfw_INCLUDE_DIRS = ${glfw_INCLUDE_DIRS}")
-    if (BUILD_SHARED_LIBS)
-        add_library(glfw SHARED IMPORTED)
-        set_target_properties(glfw PROPERTIES
-            IMPORTED_LOCATION "${glfw_LIBRARIES}/glfw3.dll"
-            IMPORTED_IMPLIB "${glfw_LIBRARIES}/glfw3dll.lib")
+if (WIN32)
+    find_path(glfw3_DIR "lib/glfw3.lib" PATHS "C:/Program Files/glfw" CACHE)
+    if (glfw3_DIR)
+        set(glfw3_LIBRARIES "${glfw3_DIR}/lib")
+        set(glfw3_INCLUDE_DIRS "${glfw3_DIR}/include")
+        if (BUILD_SHARED_LIBS)
+            add_library(glfw SHARED IMPORTED)
+            set_target_properties(glfw PROPERTIES
+                IMPORTED_LOCATION "${glfw3_LIBRARIES}/glfw3.dll"
+                IMPORTED_IMPLIB "${glfw3_LIBRARIES}/glfw3dll.lib")
+        else()
+            add_library(glfw3 STATIC IMPORTED)
+            set_target_properties(glfw3 PROPERTIES IMPORTED_LOCATION "${glfw3_LIBRARIES}/glfw3.lib")
+        endif()
+        target_include_directories(glfw3 INTERFACE ${glfw3_INCLUDE_DIRS})
     else()
-        add_library(glfw STATIC IMPORTED)
-        set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${glfw_LIBRARIES}/glfw3.lib")
+        message(STATUS "glfw3 was not found.")
     endif()
-    target_include_directories(glfw INTERFACE ${glfw_INCLUDE_DIRS})
-else()
-    message(STATUS "glfw was not found.")
-endif()
+else(WIN32)
+    find_package(glfw3 REQUIRED)
+endif(WIN32)
 
 set(PUBLIC_INCLUDE_PATHS
     include
@@ -61,6 +62,7 @@ set(SOURCES
 source_group(Sources FILES ${SOURCES})
 
 add_library(${PROJECT_NAME} ${SOURCES})
+target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PUBLIC_INCLUDE_PATHS} PRIVATE ${PRIVATE_INCLUDE_PATHS})
 target_compile_definitions(${PROJECT_NAME}
     PRIVATE
