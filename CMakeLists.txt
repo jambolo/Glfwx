@@ -1,6 +1,9 @@
 cmake_minimum_required (VERSION 3.10)
 project(Glfwx CXX)
 
+# Never build as DLL
+#option(BUILD_SHARED_LIBS "Build libraries as DLLs" FALSE)
+
 set(${PROJECT_NAME}_DOXYGEN_OUTPUT_DIRECTORY "" CACHE PATH "Doxygen output directory (empty to disable)")
 
 if(${PROJECT_NAME}_DOXYGEN_OUTPUT_DIRECTORY)
@@ -31,10 +34,10 @@ if (WIN32)
                 IMPORTED_LOCATION "${glfw3_LIBRARIES}/glfw3.dll"
                 IMPORTED_IMPLIB "${glfw3_LIBRARIES}/glfw3dll.lib")
         else()
-            add_library(glfw3 STATIC IMPORTED)
-            set_target_properties(glfw3 PROPERTIES IMPORTED_LOCATION "${glfw3_LIBRARIES}/glfw3.lib")
+            add_library(glfw STATIC IMPORTED)
+            set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${glfw3_LIBRARIES}/glfw3.lib")
         endif()
-        target_include_directories(glfw3 INTERFACE ${glfw3_INCLUDE_DIRS})
+        target_include_directories(glfw INTERFACE ${glfw3_INCLUDE_DIRS})
     else()
         message(STATUS "glfw3 was not found.")
     endif()
@@ -61,7 +64,11 @@ set(SOURCES
 )
 source_group(Sources FILES ${SOURCES})
 
-add_library(${PROJECT_NAME} ${SOURCES})
+if(NOT CMAKE_DEBUG_POSTFIX)
+  set(CMAKE_DEBUG_POSTFIX d)
+endif()
+
+add_library(${PROJECT_NAME} STATIC ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PUBLIC_INCLUDE_PATHS} PRIVATE ${PRIVATE_INCLUDE_PATHS})
 target_compile_definitions(${PROJECT_NAME}

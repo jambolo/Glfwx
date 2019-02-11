@@ -23,8 +23,8 @@ public:
     //! Destructor.
     virtual ~Window();
 
-    //! Opens the window.
-    int open();
+    //! Creates the window.
+    int create();
 
     //! Returns the value of the specified attribute.
     int getAttribute(int attr) const;
