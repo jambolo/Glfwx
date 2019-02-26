@@ -3,39 +3,51 @@
 #if !defined(GLFWX_GLFWX_H)
 #define GLFWX_GLFWX_H
 
-#include "GLFW/glfw3.h"
 #include "Glfwx/Enumerations.h"
 #include "Glfwx/Window.h"
-#include <vector>
+#include "GLFW/glfw3.h"
 #include <cstdint>
+#include <vector>
 
 namespace Glfwx
 {
 //! Initializes GLFW.
-    bool init()
-    {
-        int rv = glfwInit();
-        return rv != GLFW_FALSE;
-    }
-
+bool init()
+{
+    int rv = glfwInit();
+    return rv != GLFW_FALSE;
+}
 
 //! Shuts down GLFW.
-    void terminate()
-    {
-        glfwTerminate();
-    }
-
+void terminate()
+{
+    glfwTerminate();
+}
 
 //! Returns the required extensions.
-    std::vector<char const *> requiredInstanceExtensions()
+std::vector<char const *> requiredInstanceExtensions()
+{
+    uint32_t      count = 0;
+    char const ** extensions;
+
+    extensions = glfwGetRequiredInstanceExtensions(&count);
+    return std::vector<char const *>(&extensions[0], &extensions[count]);
+}
+
+//! RAII for Glfw.
+struct Instance
+{
+    Instance()
     {
-        uint32_t        count = 0;
-        char const **   extensions;
-
-        extensions = glfwGetRequiredInstanceExtensions(&count);
-        return std::vector<char const *>(&extensions[0], &extensions[count]);
+        init();
     }
-
+    ~Instance()
+    {
+        terminate();
+    }
+    Instance(Instance const &) = delete;
+    Instance & operator =(Instance const &) = delete;
+};
 } // namespace Glfwx
 
 #endif // !defined(GLFWX_GLFWX_H)
