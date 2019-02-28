@@ -5,6 +5,7 @@
 
 #include "Glfwx/Enumerations.h"
 #include <GLFW/glfw3.h>
+#include <functional>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -33,6 +34,7 @@ public:
         if (width <= 0 || height <= 0)
             throw std::invalid_argument("Window::Window: width <= 0 || height <= 0");
         window_ = glfwCreateWindow(width, height, title, monitor, share);
+        glfwSetWindowUserPointer(window_, this);
     }
 
     //! Destructor.
@@ -183,86 +185,128 @@ public:
     //! Saves a context for the window.
     void setContext(void * context)
     {
-        glfwSetWindowUserPointer(window_, context);
+        context_ = context;
     }
 
     //! Returns the previously set context, or nullptr.
     void * context() const
     {
-        return glfwGetWindowUserPointer(window_);
+        return context_;
     }
 
     //! Sets the function to be called when the window's position changes size.
     //!
-    //! @param  callback    Callback function
-    //!
-    //! @return     previous callback or nullptr
-    GLFWwindowposfun setWindowPosCallback(GLFWwindowposfun cb)
+    //! @param  cb      Callback function
+    void setWindowPosCallback(std::function<void(Window *, int, int)> const & cb)
     {
-        return glfwSetWindowPosCallback(window_, cb);
+        windowPosCallback_ = cb;
+        if (cb)
+        {
+            glfwSetWindowPosCallback(window_, callWindowPosCallback);
+        }
+        else
+        {
+            glfwSetWindowPosCallback(window_, nullptr);
+        }
     }
 
     //! Sets the function to be called when the window changes size.
     //!
-    //! @param  callback    Callback function
-    //!
-    //! @return     previous callback or nullptr
-    GLFWwindowsizefun setWindowSizeCallback(GLFWwindowsizefun cb)
+    //! @param  cb      Callback function
+    void setWindowSizeCallback(std::function<void(Window *, int, int)> const & cb)
     {
-        return glfwSetWindowSizeCallback(window_, cb);
+        windowSizeCallback_ = cb;
+        if (cb)
+        {
+            glfwSetWindowSizeCallback(window_, callWindowSizeCallback);
+        }
+        else
+        {
+            glfwSetWindowSizeCallback(window_, nullptr);
+        }
     }
 
     //! Sets the function to be called when the is about to close.
     //!
-    //! @param  callback    Callback function
-    //!
-    //! @return     previous callback or nullptr
-    GLFWwindowclosefun setWindowCloseCallback(GLFWwindowclosefun cb)
+    //! @param  cb      Callback function
+    void setWindowCloseCallback(std::function<void(Window *)> const & cb)
     {
-        return glfwSetWindowCloseCallback(window_, cb);
+        windowCloseCallback_ = cb;
+        if (cb)
+        {
+            glfwSetWindowCloseCallback(window_, callWindowCloseCallback);
+        }
+        else
+        {
+            glfwSetWindowCloseCallback(window_, nullptr);
+        }
     }
 
     //! Sets the function to be called when the window needs to be refreshed.
     //!
-    //! @param  callback    Callback function
-    //!
-    //! @return     previous callback or nullptr
-    GLFWwindowrefreshfun setWindowRefreshCallback(GLFWwindowrefreshfun cb)
+    //! @param  cb      Callback function
+    void setWindowRefreshCallback(std::function<void(Window *)> const & cb)
     {
-        return glfwSetWindowRefreshCallback(window_, cb);
+        windowRefreshCallback_ = cb;
+        if (cb)
+        {
+            glfwSetWindowRefreshCallback(window_, callWindowRefreshCallback);
+        }
+        else
+        {
+            glfwSetWindowRefreshCallback(window_, nullptr);
+        }
     }
 
     //! Sets the function to be called when the window gains focus.
     //!
-    //! @param  callback    Callback function
-    //!
-    //! @return     previous callback or nullptr
-    GLFWwindowfocusfun setWindowFocusCallback(GLFWwindowfocusfun cb)
+    //! @param  cb      Callback function
+    void setWindowFocusCallback(std::function<void(Window *, bool)> const & cb)
     {
-        return glfwSetWindowFocusCallback(window_, cb);
+        windowFocusCallback_ = cb;
+        if (cb)
+        {
+            glfwSetWindowFocusCallback(window_, callWindowFocusCallback);
+        }
+        else
+        {
+            glfwSetWindowFocusCallback(window_, nullptr);
+        }
     }
 
     //! Sets the function to be called when the window is iconified.
     //!
-    //! @param  callback    Callback function
-    //!
-    //! @return     previous callback or nullptr
-    GLFWwindowiconifyfun setWindowIconifyCallback(GLFWwindowiconifyfun cb)
+    //! @param  cb      Callback function
+    void setWindowIconifyCallback(std::function<void(Window *, int)> const & cb)
     {
-        return glfwSetWindowIconifyCallback(window_, cb);
+        windowIconifyCallback_ = cb;
+        if (cb)
+        {
+            glfwSetWindowIconifyCallback(window_, callWindowIconifyCallback);
+        }
+        else
+        {
+            glfwSetWindowIconifyCallback(window_, nullptr);
+        }
     }
 
     //! Sets the function to be called when the window's framebuffer changes size.
     //!
-    //! @param  callback    Callback function
-    //!
-    //! @return     previous callback or nullptr
-    GLFWframebuffersizefun setFramebufferSizeCallback(GLFWframebuffersizefun cb)
+    //! @param  cb      Callback function
+    void setFramebufferSizeCallback(std::function<void(Window *, int, int)> const & cb)
     {
-        return glfwSetFramebufferSizeCallback(window_, cb);
+        framebufferSizeCallback_ = cb;
+        if (cb)
+        {
+            glfwSetFramebufferSizeCallback(window_, callFramebufferSizeCallback);
+        }
+        else
+        {
+            glfwSetFramebufferSizeCallback(window_, nullptr);
+        }
     }
 
-    //! Processes window activity.
+    //! Processes any window activity.
     //!
     //! @return    The close value
     //!
@@ -271,6 +315,18 @@ public:
     int processEvents()
     {
         glfwPollEvents();
+        return glfwWindowShouldClose(window_);
+    }
+
+    //! Waits for any window activity and processes it.
+    //!
+    //! @return    The close value
+    //!
+    //! @sa     glfwWaitEvents
+    //! @sa     glfwWindowShouldClose
+    int waitEvents()
+    {
+        glfwWaitEvents();
         return glfwWindowShouldClose(window_);
     }
 
@@ -313,6 +369,56 @@ public:
 private:
 
     GLFWwindow * window_ = nullptr;
+    void * context_;
+    std::function<void(Window *, int, int)> windowPosCallback_;
+    std::function<void(Window *, int, int)> windowSizeCallback_;
+    std::function<void(Window *)> windowCloseCallback_;
+    std::function<void(Window *)> windowRefreshCallback_;
+    std::function<void(Window *, bool)> windowFocusCallback_;
+    std::function<void(Window *, bool)> windowIconifyCallback_;
+    std::function<void(Window *, int, int)> framebufferSizeCallback_;
+
+    static void callWindowPosCallback(GLFWwindow * window, int x, int y)
+    {
+        Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
+        that->windowPosCallback_(that, x, y);
+    }
+
+    static void callWindowSizeCallback(GLFWwindow * window, int width, int height)
+    {
+        Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
+        that->windowSizeCallback_(that, width, height);
+    }
+
+    static void callWindowCloseCallback(GLFWwindow * window)
+    {
+        Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
+        that->windowCloseCallback_(that);
+    }
+
+    static void callWindowRefreshCallback(GLFWwindow * window)
+    {
+        Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
+        that->windowRefreshCallback_(that);
+    }
+
+    static void callWindowFocusCallback(GLFWwindow * window, int gained)
+    {
+        Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
+        that->windowFocusCallback_(that, gained != 0);
+    }
+
+    static void callWindowIconifyCallback(GLFWwindow * window, int iconified)
+    {
+        Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
+        that->windowIconifyCallback_(that, iconified != 0);
+    }
+
+    static void callFramebufferSizeCallback(GLFWwindow * window, int width, int height)
+    {
+        Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
+        that->framebufferSizeCallback_(that, width, height);
+    }
 };
 } // namespace Glfwx
 
