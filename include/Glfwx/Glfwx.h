@@ -5,9 +5,10 @@
 
 #include "Glfwx/Enumerations.h"
 #include "Glfwx/Window.h"
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 #include <cstdint>
 #include <vector>
+#include <iostream>
 
 namespace Glfwx
 {
@@ -15,6 +16,9 @@ namespace Glfwx
 bool init()
 {
     int rv = glfwInit();
+#if !defined(NDEBUG)
+    std::cerr << glfwGetVersionString() << std::endl;
+#endif
     return rv != GLFW_FALSE;
 }
 

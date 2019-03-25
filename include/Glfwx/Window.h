@@ -12,8 +12,6 @@
 
 namespace Glfwx
 {
-enum class Hint;
-
 //! Wrapper for GLFW window.
 class Window
 {

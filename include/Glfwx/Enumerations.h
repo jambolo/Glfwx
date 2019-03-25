@@ -157,20 +157,20 @@ enum class Key
 };
 
 //! Mouse buttons.
-enum class Mouse
+enum class MouseButton
 {
-    eBUTTON_1      = GLFW_MOUSE_BUTTON_1,
-    eBUTTON_2      = GLFW_MOUSE_BUTTON_2,
-    eBUTTON_3      = GLFW_MOUSE_BUTTON_3,
-    eBUTTON_4      = GLFW_MOUSE_BUTTON_4,
-    eBUTTON_5      = GLFW_MOUSE_BUTTON_5,
-    eBUTTON_6      = GLFW_MOUSE_BUTTON_6,
-    eBUTTON_7      = GLFW_MOUSE_BUTTON_7,
-    eBUTTON_8      = GLFW_MOUSE_BUTTON_8,
-    eBUTTON_LAST   = GLFW_MOUSE_BUTTON_LAST,
-    eBUTTON_LEFT   = GLFW_MOUSE_BUTTON_LEFT,
-    eBUTTON_RIGHT  = GLFW_MOUSE_BUTTON_RIGHT,
-    eBUTTON_MIDDLE = GLFW_MOUSE_BUTTON_MIDDLE
+    e1      = GLFW_MOUSE_BUTTON_1,
+    e2      = GLFW_MOUSE_BUTTON_2,
+    e3      = GLFW_MOUSE_BUTTON_3,
+    e4      = GLFW_MOUSE_BUTTON_4,
+    e5      = GLFW_MOUSE_BUTTON_5,
+    e6      = GLFW_MOUSE_BUTTON_6,
+    e7      = GLFW_MOUSE_BUTTON_7,
+    e8      = GLFW_MOUSE_BUTTON_8,
+    eLAST   = GLFW_MOUSE_BUTTON_LAST,
+    eLEFT   = GLFW_MOUSE_BUTTON_LEFT,
+    eRIGHT  = GLFW_MOUSE_BUTTON_RIGHT,
+    eMIDDLE = GLFW_MOUSE_BUTTON_MIDDLE
 };
 
 //! Joystick inputs.
