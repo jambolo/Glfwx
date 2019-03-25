@@ -42,7 +42,7 @@ if (WIN32)
         message(STATUS "glfw3 was not found.")
     endif()
 else(WIN32)
-    find_package(glfw3 REQUIRED)
+    find_package(glfw3 3.3 REQUIRED)
 endif(WIN32)
 
 set(PUBLIC_INCLUDE_PATHS
@@ -70,6 +70,9 @@ endif()
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
+if(APPLE)
+    target_link_libraries(${PROJECT_NAME} PUBLIC "-framework Cocoa -framework IOKit -framework CoreVideo")
+endif()
 target_include_directories(${PROJECT_NAME} PUBLIC ${PUBLIC_INCLUDE_PATHS} PRIVATE ${PRIVATE_INCLUDE_PATHS})
 target_compile_definitions(${PROJECT_NAME}
     PRIVATE
