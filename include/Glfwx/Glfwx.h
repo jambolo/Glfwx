@@ -17,7 +17,8 @@ bool init()
 {
     int rv = glfwInit();
 #if !defined(NDEBUG)
-    std::cerr << glfwGetVersionString() << std::endl;
+    if (rv)
+        std::cerr << "GLFW: " << glfwGetVersionString() << std::endl;
 #endif
     return rv != GLFW_FALSE;
 }
