@@ -1,7 +1,7 @@
-#pragma once
-
 #if !defined(GLFWX_ENUMERATIONS_H)
 #define GLFWX_ENUMERATIONS_H
+
+#pragma once
 
 #include <GLFW/glfw3.h>
 
