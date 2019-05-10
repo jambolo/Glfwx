@@ -3,9 +3,10 @@
 
 #pragma once
 
-#include "Glfwx/Enumerations.h"
-#include "Glfwx/Window.h"
 #include <GLFW/glfw3.h>
+#include "Glfwx/Enumerations.h"
+#include "Glfwx/Monitor.h"
+#include "Glfwx/Window.h"
 #include <cstdint>
 #include <vector>
 #include <iostream>

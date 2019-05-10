@@ -57,6 +57,7 @@ set(PRIVATE_INCLUDE_PATHS
 set(SOURCES
     include/Glfwx/Enumerations.h
     include/Glfwx/Glfwx.h
+    include/Glfwx/Monitor.h
     include/Glfwx/Window.h
     
     Glfwx.cpp
