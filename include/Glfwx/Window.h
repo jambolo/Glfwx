@@ -34,7 +34,7 @@ public:
     {
         if (width <= 0 || height <= 0)
             throw std::invalid_argument("Window::Window: width <= 0 || height <= 0");
-        window_ = glfwCreateWindow(width, height, title, *monitor, share);
+        window_ = glfwCreateWindow(width, height, title, (monitor) ? (GLFWmonitor *)*monitor : nullptr, share);
         glfwSetWindowUserPointer(window_, this);
     }
 
