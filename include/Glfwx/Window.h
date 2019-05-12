@@ -3,8 +3,9 @@
 
 #pragma once
 
-#include "Glfwx/Enumerations.h"
+#include <Glfwx/Enumerations.h>
 #include <GLFW/glfw3.h>
+#include <Glfwx/Monitor.h>
 #include <functional>
 #include <stdexcept>
 #include <string>
@@ -13,6 +14,8 @@
 namespace Glfwx
 {
 //! Wrapper for GLFW window.
+//!
+//! @sa     GLFWwindow
 class Window
 {
 public:
@@ -27,11 +30,11 @@ public:
     //!
     //! @sa hint()
 
-    Window(int width, int height, char const * title, GLFWmonitor * monitor = nullptr, GLFWwindow * share = nullptr)
+    Window(int width, int height, char const * title, Monitor * monitor = nullptr, GLFWwindow * share = nullptr)
     {
         if (width <= 0 || height <= 0)
             throw std::invalid_argument("Window::Window: width <= 0 || height <= 0");
-        window_ = glfwCreateWindow(width, height, title, monitor, share);
+        window_ = glfwCreateWindow(width, height, title, *monitor, share);
         glfwSetWindowUserPointer(window_, this);
     }
 
@@ -163,9 +166,9 @@ public:
     }
 
     //! Returns the window's monitor.
-    GLFWmonitor * monitor() const
+    Monitor monitor() const
     {
-        return glfwGetWindowMonitor(window_);
+        return Monitor(glfwGetWindowMonitor(window_));
     }
 
     //! Sets the window's monitor parameters.

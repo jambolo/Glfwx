@@ -4,9 +4,9 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
-#include "Glfwx/Enumerations.h"
-#include "Glfwx/Monitor.h"
-#include "Glfwx/Window.h"
+#include <Glfwx/Enumerations.h>
+#include <Glfwx/Monitor.h>
+#include <Glfwx/Window.h>
 #include <cstdint>
 #include <vector>
 #include <iostream>
@@ -34,10 +34,8 @@ void terminate()
 std::vector<char const *> requiredInstanceExtensions()
 {
     uint32_t      count = 0;
-    char const ** extensions;
-
-    extensions = glfwGetRequiredInstanceExtensions(&count);
-    return std::vector<char const *>(&extensions[0], &extensions[count]);
+    char const ** extensions = glfwGetRequiredInstanceExtensions(&count);
+    return (extensions && count > 0) ? std::vector<char const *>(&extensions[0], &extensions[count]) : std::vector<char const *>();
 }
 
 //! RAII for Glfw.
@@ -45,14 +43,18 @@ struct Instance
 {
     Instance()
     {
-        init();
+        ok_ = init();
+        if (!ok_)
+            throw std::runtime_error("glfwInit() failed.");
     }
     ~Instance()
     {
-        terminate();
+        if (ok_)
+            terminate();
     }
     Instance(Instance const &) = delete;
     Instance & operator =(Instance const &) = delete;
+    bool ok_ = false;
 };
 } // namespace Glfwx
 

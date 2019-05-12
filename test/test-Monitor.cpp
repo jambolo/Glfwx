@@ -1,40 +1,63 @@
-#if !defined(GLFWX_MONITOR_H)
-#define GLFWX_MONITOR_H
+#include <Glfwx/Monitor.h>
 
-#pragma once
+#include <Glfwx/Glfwx.h>
+#include <gtest/gtest.h>
 
-#include <Glfwx/Enumerations.h>
-#include <GLFW/glfw3.h>
-#include <functional>
-#include <stdexcept>
-#include <string>
-#include <vector>
-#include <iterator>
-
-namespace Glfwx
+class MonitorTest : public testing::Test
 {
-//! Wrapper for GLFW monitor.
-//!
-//! @sa     GLFWmonitor
-class Monitor
+public:
+    MonitorTest()
     {
-    public:
-        explicit Monitor(GLFWmonitor * m)
-        : monitor_(m)
-        {
-        }
+    }
 
-        //! Video mode information.
-        //!
-        //! @sa     GLFWvidmode
-        using VideoMode = GLFWvidmode;
+    ~MonitorTest()
+    {
+    }
 
-        //! Gamma ramp specification.
-        using GammaRamp = GLFWgammaramp;
+    Glfwx::Instance glfwx_;
+};
 
-        //! Returns a list of copies of the available monitors
-        //!
-        //! @sa     glfwGetMonitors
+TEST_F(MonitorTest, enumerate)
+{
+    std::vector<Glfwx::Monitor> monitors = Glfwx::Monitor::enumerate();
+    EXPECT_GT(monitors.size(), 0);
+    int id = 0;
+    std::cerr << "[";
+    for (auto const & m : monitors)
+    {
+        if (id != 0)
+            std::cerr << ", ";
+        std::cerr << "{ ";
+
+        std::string name = m.name();
+        std::cerr << "\"name\" : \"" << name << "\", ";
+
+        int positionX = -1;
+        int positionY = -1;
+        m.position(&positionX, &positionY);
+        std::cerr << "\"position\" : [" << positionX << ", " << positionY << "], ";
+
+        int sizeX = -1;
+        int sizeY = -1;
+        m.size(&sizeX, &sizeY);
+        std::cerr << "\"size\" : [" << sizeX << ", " << sizeY << "], ";
+
+        float scaleX = 0;
+        float scaleY = 0;
+        m.scale(&scaleX, &scaleY);
+        std::cerr << "\"scale\" : [" << scaleX << ", " << scaleY << "], ";
+
+        m.workArea(&positionX, &positionY, &sizeX, &sizeY);
+        std::cerr << "\"workArea\" : [" << positionX << ", " << positionY << ", " << sizeX << ", " << sizeY << "]";
+
+        Glfwx::Monitor::GammaRamp ramp = m.gammaRamp();
+        Glfwx::Monitor::VideoMode mode = m.videoMode();
+        std::cerr << " }";
+    }
+    std::cerr << "]" << std::endl;
+}
+
+#if 0
         static std::vector<Monitor> enumerate()
         {
             int count = 0;
@@ -55,12 +78,6 @@ class Monitor
         static Monitor primary()
         {
             return Monitor(glfwGetPrimaryMonitor());
-        }
-
-        //! Implicit conversion to GLFWmonitor *
-        operator GLFWmonitor *() const
-        {
-            return monitor_;
         }
 
         //! Returns the position of the monitor's viewport on the virtual screen.
@@ -201,15 +218,12 @@ class Monitor
             return ramp ? *ramp : GammaRamp{ nullptr, nullptr, nullptr, 0 };
         }
 
-    private:
-        static void onConnectionChanged(GLFWmonitor * monitor, int status)
-        {
-            handleConnectionChanged_(Monitor(monitor), status == GLFW_CONNECTED);
-        }
 
-        GLFWmonitor * monitor_;
-        static std::function<void(Monitor const &, bool)> handleConnectionChanged_;
-    };
+#endif
+
+int main(int argc, char ** argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    int rv = RUN_ALL_TESTS();
+    return rv;
 }
-
-#endif // !defined(GLFWX_MONITOR_H)
