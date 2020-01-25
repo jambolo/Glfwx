@@ -3,6 +3,53 @@
 #include <Glfwx/Glfwx.h>
 #include <gtest/gtest.h>
 
+void dump_monitor(Glfwx::Monitor const & m)
+{
+    std::cerr << "{ ";
+
+    std::string name = m.name();
+    std::cerr << "\"name\" : \"" << name << "\", ";
+
+    int positionX = -1;
+    int positionY = -1;
+    m.position(&positionX, &positionY);
+    std::cerr << "\"position\" : [" << positionX << ", " << positionY << "], ";
+
+    int sizeX = -1;
+    int sizeY = -1;
+    m.size(&sizeX, &sizeY);
+    std::cerr << "\"size\" : [" << sizeX << ", " << sizeY << "], ";
+
+    float scaleX = 0;
+    float scaleY = 0;
+    m.scale(&scaleX, &scaleY);
+    std::cerr << "\"scale\" : [" << scaleX << ", " << scaleY << "], ";
+
+    m.workArea(&positionX, &positionY, &sizeX, &sizeY);
+    std::cerr << "\"workArea\" : [" << positionX << ", " << positionY << ", " << sizeX << ", " << sizeY << "], ";
+
+    Glfwx::Monitor::GammaRamp ramp = m.gammaRamp();
+    std::cerr << "\"gammaRamp\" : [";
+    if (ramp.size > 0)
+        std::cerr << "[" << ramp.red[0] << ", " << ramp.green[0] << ", " << ramp.blue[0] << "]";
+    for (int i = 1; i < ramp.size; ++i)
+    {
+        std::cerr << ", [" << ramp.red[i] << ", " << ramp.green[i] << ", " << ramp.blue[i] << "]";
+    }
+    std::cerr << "], ";
+
+    Glfwx::Monitor::VideoMode mode = m.videoMode();
+    std::cerr << "\"videoMode\" : ["
+              << mode.width << ", "
+              << mode.height << ", "
+              << mode.redBits << ", "
+              << mode.greenBits << ", "
+              << mode.blueBits << ", "
+              << mode.refreshRate << "]";
+
+    std::cerr << " }";
+
+}
 class MonitorTest : public testing::Test
 {
 public:
@@ -25,53 +72,15 @@ TEST_F(MonitorTest, enumerate)
     std::cerr << "[";
     for (auto const & m : monitors)
     {
-        if (id != 0)
+        if (id > 0)
             std::cerr << ", ";
-        std::cerr << "{ ";
-
-        std::string name = m.name();
-        std::cerr << "\"name\" : \"" << name << "\", ";
-
-        int positionX = -1;
-        int positionY = -1;
-        m.position(&positionX, &positionY);
-        std::cerr << "\"position\" : [" << positionX << ", " << positionY << "], ";
-
-        int sizeX = -1;
-        int sizeY = -1;
-        m.size(&sizeX, &sizeY);
-        std::cerr << "\"size\" : [" << sizeX << ", " << sizeY << "], ";
-
-        float scaleX = 0;
-        float scaleY = 0;
-        m.scale(&scaleX, &scaleY);
-        std::cerr << "\"scale\" : [" << scaleX << ", " << scaleY << "], ";
-
-        m.workArea(&positionX, &positionY, &sizeX, &sizeY);
-        std::cerr << "\"workArea\" : [" << positionX << ", " << positionY << ", " << sizeX << ", " << sizeY << "]";
-
-        Glfwx::Monitor::GammaRamp ramp = m.gammaRamp();
-        Glfwx::Monitor::VideoMode mode = m.videoMode();
-        std::cerr << " }";
+        dump_monitor(m);
+        ++id;
     }
     std::cerr << "]" << std::endl;
 }
 
 #if 0
-        static std::vector<Monitor> enumerate()
-        {
-            int count = 0;
-            GLFWmonitor** monitorPointers = glfwGetMonitors(&count);
-
-            std::vector<Monitor> rv;
-            rv.reserve(count);
-            for (int i = 0; i < count; ++i)
-            {
-                rv.emplace_back(monitorPointers[i]);
-            }
-            return rv;
-        }
-
         //! Returns a copy of the primary monitor.
         //!
         //! @sa     glfwGetPrimaryMonitor
