@@ -22,11 +22,11 @@ public:
 
     //! Constructor.
     //!
-    //! @param  width
-    //! @param  height
-    //! @param  name
-    //! @param  monitor
-    //! @param  share
+    //! @param  width       The desired width of the window (must be > 0)
+    //! @param  height      The desired height of the window (must be > 0)
+    //! @param  title       The initial UTF-8 window title
+    //! @param  monitor     The monitor to use for full screen mode, or nullptr for windowed mode (optional)
+    //! @param  share       The window whose context to share resources with, or nullptr to not share resources (optional)
     //!
     //! @sa hint()
 
@@ -35,6 +35,8 @@ public:
         if (width <= 0 || height <= 0)
             throw std::invalid_argument("Window::Window: width <= 0 || height <= 0");
         window_ = glfwCreateWindow(width, height, title, (monitor) ? (GLFWmonitor *)*monitor : nullptr, share);
+        if (!window_)
+            throw std::runtime_error("glfwCreateWindow failed.");
         glfwSetWindowUserPointer(window_, this);
     }
 

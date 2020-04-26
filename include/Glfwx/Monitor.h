@@ -17,8 +17,10 @@ namespace Glfwx
 //!
 //! @sa     GLFWmonitor
 class Monitor
-    {
+{
     public:
+
+        //! Constructor.
         explicit Monitor(GLFWmonitor * m)
         : monitor_(m)
         {
