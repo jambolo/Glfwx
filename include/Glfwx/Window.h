@@ -156,6 +156,7 @@ public:
     //! @param  share       The window whose context to share resources with, or nullptr to not share resources (optional)
     //!
     //! @sa hint()
+    //! @warning    GLFW requires that the window be constructed in the main thread.
 
     Window(int width, int height, char const * title, Monitor * monitor = nullptr, GLFWwindow * share = nullptr)
     {
@@ -164,7 +165,20 @@ public:
         window_ = glfwCreateWindow(width, height, title, (monitor) ? (GLFWmonitor *)*monitor : nullptr, share);
         if (!window_)
             throw std::runtime_error("glfwCreateWindow failed.");
+
         glfwSetWindowUserPointer(window_, this);
+
+        // Notifications
+        // Note: GLFW requires that callbacks be set in the main thread
+        glfwSetWindowPosCallback(window_, handlePositionChanged);
+        glfwSetWindowSizeCallback(window_, handleSizeChanged);
+        glfwSetWindowCloseCallback(window_, handleClose);
+        glfwSetWindowRefreshCallback(window_, handleRefresh);
+        glfwSetWindowFocusCallback(window_, handleFocusChanged);
+        glfwSetWindowIconifyCallback(window_, handleIconifyChanged);
+        glfwSetWindowMaximizeCallback(window_, handleMaximizeChanged);
+        glfwSetFramebufferSizeCallback(window_, handleFramebufferSizeChanged);
+        glfwSetWindowContentScaleCallback(window_, handleContentScaleChanged);
     }
 
     //! Destructor.
@@ -380,90 +394,6 @@ public:
         return context_;
     }
 
-    //! Sets the function to be called when the window's position changes size.
-    //!
-    //! @param  cb      Callback function
-    void setPositionChangedCallback(std::function<void(Window *, int, int)> const & cb)
-    {
-        handlePositionChanged_ = cb;
-        if (cb)
-            glfwSetWindowPosCallback(window_, onPositionChanged);
-        else
-            glfwSetWindowPosCallback(window_, nullptr);
-    }
-
-    //! Sets the function to be called when the window changes size.
-    //!
-    //! @param  cb      Callback function
-    void setWindowSizeChangedCallback(std::function<void(Window *, int, int)> const & cb)
-    {
-        handleWindowSizeChanged_ = cb;
-        if (cb)
-            glfwSetWindowSizeCallback(window_, onWindowSizeChanged);
-        else
-            glfwSetWindowSizeCallback(window_, nullptr);
-    }
-
-    //! Sets the function to be called when the window is about to close.
-    //!
-    //! @param  cb      Callback function
-    void setCloseCallback(std::function<void(Window *)> const & cb)
-    {
-        handleClose_ = cb;
-        if (cb)
-            glfwSetWindowCloseCallback(window_, onClose);
-        else
-            glfwSetWindowCloseCallback(window_, nullptr);
-    }
-
-    //! Sets the function to be called when the window needs to be refreshed.
-    //!
-    //! @param  cb      Callback function
-    void setRefreshCallback(std::function<void(Window *)> const & cb)
-    {
-        handleRefresh_ = cb;
-        if (cb)
-            glfwSetWindowRefreshCallback(window_, onRefresh);
-        else
-            glfwSetWindowRefreshCallback(window_, nullptr);
-    }
-
-    //! Sets the function to be called when the window gains or loses focus.
-    //!
-    //! @param  cb      Callback function
-    void setFocusChangedCallback(std::function<void(Window *, bool)> const & cb)
-    {
-        handleFocusChanged_ = cb;
-        if (cb)
-            glfwSetWindowFocusCallback(window_, onFocusChanged);
-        else
-            glfwSetWindowFocusCallback(window_, nullptr);
-    }
-
-    //! Sets the function to be called when the window's iconified status has changed.
-    //!
-    //! @param  cb      Callback function
-    void setIconifyChangedCallback(std::function<void(Window *, int)> const & cb)
-    {
-        handleIconifyChanged_ = cb;
-        if (cb)
-            glfwSetWindowIconifyCallback(window_, onIconifyChanged);
-        else
-            glfwSetWindowIconifyCallback(window_, nullptr);
-    }
-
-    //! Sets the function to be called when the window's framebuffer changes size.
-    //!
-    //! @param  cb      Callback function
-    void setFramebufferSizeChangedCallback(std::function<void(Window *, int, int)> const & cb)
-    {
-        handleFramebufferSizeChanged_ = cb;
-        if (cb)
-            glfwSetFramebufferSizeCallback(window_, onFramebufferSizeChanged);
-        else
-            glfwSetFramebufferSizeCallback(window_, nullptr);
-    }
-
     //! Processes any window activity.
     //!
     //! @return    The close value
@@ -531,59 +461,133 @@ public:
     {
         glfwWindowHint(static_cast<int>(id), value);
     }
+
 private:
 
+    //! @name Overridable Notifications
+    //! These methods must be overridden in order to receive the appropriate notifications.
+    //!@{
+
+    //! Called when the window position is changed.
+    //!
+    //! @param  x       New location
+    //! @param  y       New location
+    //!
+    //! @note   Override this method to be notified of this event
+    virtual void onPositionChanged(int x, int y) {}
+
+    //! Called when the size of the window is changed.
+    //!
+    //! @param  width       New size
+    //! @param  height      New size
+    //!
+    //! @note   Override this method to be notified of this event
+    virtual void onSizeChanged(int width, int height) {}
+
+    //! Called before the window is closed.
+    //! @note   Override this method to be notified of this event
+    virtual void onClose() {}
+
+    //! Called when the contents of the window need to be refreshed.
+    //! @note   Override this method to be notified of this event
+    virtual void onRefresh() {}
+
+    //! Called when the window focused has changed to or from the window.
+    //!
+    //! @param  gained      1 if the window gains focus. 0 if the window loses focus.
+    //!
+    //! @note   Override this method to be notified of this event
+    virtual void onFocusChanged(int gained) {}
+
+    //! Called when the window has changed to or from the icon state.
+    //!
+    //! @param  iconified       1 if the window is iconified. 0 if the window is opened.
+    //!
+    //! @note   Override this method to be notified of this event
+    virtual void onIconifyChanged(int iconified) {}
+
+    //! Called when the when changes to or from maximized state
+    //!
+    //! @param  maximized       1 if the window is maximized, 0 if the window returns to normal
+    //!
+    //! @note   Override this method to be notified of this event
+    virtual void onMaximizeChanged(int maximized) {}
+
+    //! Called when the size of the window's framebuffer changes.
+    //!
+    //! @param  width       New framebuffer size
+    //! @param  height      New framebuffer size
+    //!
+    //! @note   Override this method to be notified of this event
+    virtual void onFramebufferSizeChanged(int width, int height) {}
+
+    //! Called when the window's content scale changes.
+    //!
+    //! @param  x       New scale
+    //! @param  y       New scale
+    //!
+    //! @note   Override this method to be notified of this event
+    virtual void onContentScaleChanged(float x, float y) {}
+    //!@}
+
+    //! @cond
     GLFWwindow * window_ = nullptr;
     void * context_;
-    std::function<void(Window *, int, int)> handlePositionChanged_;
-    std::function<void(Window *, int, int)> handleWindowSizeChanged_;
-    std::function<void(Window *)> handleClose_;
-    std::function<void(Window *)> handleRefresh_;
-    std::function<void(Window *, bool)> handleFocusChanged_;
-    std::function<void(Window *, bool)> handleIconifyChanged_;
-    std::function<void(Window *, int, int)> handleFramebufferSizeChanged_;
 
-    static void onPositionChanged(GLFWwindow * window, int x, int y)
+    static void handlePositionChanged(GLFWwindow * window, int x, int y)
     {
         Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
-        that->handlePositionChanged_(that, x, y);
+        that->onPositionChanged(x, y);
     }
 
-    static void onWindowSizeChanged(GLFWwindow * window, int width, int height)
+    static void handleSizeChanged(GLFWwindow * window, int width, int height)
     {
         Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
-        that->handleWindowSizeChanged_(that, width, height);
+        that->onSizeChanged(width, height);
     }
 
-    static void onClose(GLFWwindow * window)
+    static void handleClose(GLFWwindow * window)
     {
         Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
-        that->handleClose_(that);
+        that->onClose();
     }
 
-    static void onRefresh(GLFWwindow * window)
+    static void handleRefresh(GLFWwindow * window)
     {
         Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
-        that->handleRefresh_(that);
+        that->onRefresh();
     }
 
-    static void onFocusChanged(GLFWwindow * window, int gained)
+    static void handleFocusChanged(GLFWwindow * window, int gained)
     {
         Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
-        that->handleFocusChanged_(that, gained != 0);
+        that->onFocusChanged(gained != 0);
     }
 
-    static void onIconifyChanged(GLFWwindow * window, int iconified)
+    static void handleIconifyChanged(GLFWwindow * window, int iconified)
     {
         Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
-        that->handleIconifyChanged_(that, iconified != 0);
+        that->onIconifyChanged(iconified != 0);
     }
 
-    static void onFramebufferSizeChanged(GLFWwindow * window, int width, int height)
+    static void handleMaximizeChanged(GLFWwindow * window, int maximized)
     {
         Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
-        that->handleFramebufferSizeChanged_(that, width, height);
+        that->onMaximizeChanged(maximized != 0);
     }
+
+    static void handleFramebufferSizeChanged(GLFWwindow * window, int width, int height)
+    {
+        Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
+        that->onFramebufferSizeChanged(width, height);
+    }
+
+    static void handleContentScaleChanged(GLFWwindow * window, float x, float y)
+    {
+        Window * that = static_cast<Window *>(glfwGetWindowUserPointer(window));
+        that->onContentScaleChanged(x, y);
+    }
+    //! @endcond
 };
 } // namespace Glfwx
 
