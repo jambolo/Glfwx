@@ -532,7 +532,7 @@ private:
 
     //! @cond
     GLFWwindow * window_ = nullptr;
-    void * context_;
+    void * context_ = nullptr;
 
     static void handlePositionChanged(GLFWwindow * window, int x, int y)
     {

@@ -127,7 +127,8 @@ public:
     //! @sa glfwGetMonitorName
     std::string name() const
     {
-        return std::string(glfwGetMonitorName(monitor_));
+        char const * name = glfwGetMonitorName(monitor_);
+        return name ? std::string(name) : std::string();
     }
 
     //! Sets the user-defined context.
