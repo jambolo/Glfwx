@@ -3,6 +3,7 @@ cmake_minimum_required (VERSION 3.10)
 set(GTEST_ROOT "" CACHE PATH "Location of GTest")
 find_package(GTest REQUIRED)
 include(GoogleTest)
+find_package(nlohmann_json REQUIRED)
 
 add_definitions(
     -DNOMINMAX
@@ -23,7 +24,7 @@ foreach(FILE ${SOURCES})
     get_filename_component(TEST ${FILE} NAME_WE)
     set(TEST_EXE "${PROJECT_NAME}_${TEST}")
     add_executable(${TEST_EXE} ${FILE})
-    target_link_libraries(${TEST_EXE} PRIVATE Glfwx GTest::GTest GTest::Main)
+    target_link_libraries(${TEST_EXE} PRIVATE Glfwx GTest::GTest GTest::Main nlohmann_json::nlohmann_json)
     gtest_discover_tests(${TEST_EXE})
     target_compile_features(${TEST_EXE} PRIVATE cxx_std_17)
     set_target_properties(${TEST_EXE} PROPERTIES CXX_EXTENSIONS OFF)

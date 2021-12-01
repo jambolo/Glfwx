@@ -2,64 +2,94 @@
 
 #include <Glfwx/Glfwx.h>
 #include <gtest/gtest.h>
+#include <nlohmann/json.hpp>
 
-void dump_monitor(Glfwx::Monitor const & m)
+using json = nlohmann::json;
+
+namespace nlohmann
 {
-    std::cerr << "{ ";
 
-    std::string name = m.name();
-    std::cerr << "\"name\" : \"" << name << "\", ";
-
-    int positionX = -1;
-    int positionY = -1;
-    m.position(&positionX, &positionY);
-    std::cerr << "\"position\" : [" << positionX << ", " << positionY << "], ";
-
-    int sizeX = -1;
-    int sizeY = -1;
-    m.size(&sizeX, &sizeY);
-    std::cerr << "\"size\" : [" << sizeX << ", " << sizeY << "], ";
-
-    float scaleX = 0;
-    float scaleY = 0;
-    m.scale(&scaleX, &scaleY);
-    std::cerr << "\"scale\" : [" << scaleX << ", " << scaleY << "], ";
-
-    m.workArea(&positionX, &positionY, &sizeX, &sizeY);
-    std::cerr << "\"workArea\" : [" << positionX << ", " << positionY << ", " << sizeX << ", " << sizeY << "], ";
-
-    Glfwx::Monitor::GammaRamp ramp = m.gammaRamp();
-    std::cerr << "\"gammaRamp\" : [";
-    if (ramp.size > 0)
-        std::cerr << "[" << ramp.red[0] << ", " << ramp.green[0] << ", " << ramp.blue[0] << "]";
-    for (int i = 1; i < ramp.size; ++i)
+    template <>
+    struct adl_serializer<Glfwx::Monitor::VideoMode>
     {
-        std::cerr << ", [" << ramp.red[i] << ", " << ramp.green[i] << ", " << ramp.blue[i] << "]";
-    }
-    std::cerr << "], ";
+        static void to_json(json & j, Glfwx::Monitor::VideoMode const & mode)
+        {
+            j = json({
+                { "width",       mode.width },
+                { "height",      mode.height },
+                { "redBits",     mode.redBits },
+                { "greenBits",   mode.greenBits },
+                { "blueBits",    mode.blueBits },
+                { "refreshRate", mode.refreshRate }
+                });
+        }
+    };
 
-    Glfwx::Monitor::VideoMode mode = m.videoMode();
-    std::cerr << "\"videoMode\" : ["
-              << mode.width << ", "
-              << mode.height << ", "
-              << mode.redBits << ", "
-              << mode.greenBits << ", "
-              << mode.blueBits << ", "
-              << mode.refreshRate << "]";
+    template <>
+    struct adl_serializer<Glfwx::Monitor::GammaRamp>
+    {
+        static void to_json(json & j, Glfwx::Monitor::GammaRamp const & ramp)
+        {
+            j = json({
+                { "red", std::vector<unsigned short>(ramp.red, ramp.red+ramp.size) },
+                { "green", std::vector<unsigned short>(ramp.green, ramp.green + ramp.size) },
+                { "blue", std::vector<unsigned short>(ramp.blue, ramp.blue + ramp.size) },
+                { "size", ramp.size }
+                });
+        }
+    };
 
-    std::cerr << " }";
+    template <>
+    struct adl_serializer<Glfwx::Monitor>
+    {
+        static void to_json(json & j, Glfwx::Monitor const & m)
+        {
+            std::string name = m.name();
+
+            int positionX = -1;
+            int positionY = -1;
+            m.position(&positionX, &positionY);
+
+            int sizeX = -1;
+            int sizeY = -1;
+            m.size(&sizeX, &sizeY);
+
+            float scaleX = 0;
+            float scaleY = 0;
+            m.scale(&scaleX, &scaleY);
+
+            struct
+            {
+                int positionX = -1;
+                int positionY = -1;
+                int sizeX = -1;
+                int sizeY = -1;
+            } workArea;
+            m.workArea(&workArea.positionX, &workArea.positionY, &workArea.sizeX, &workArea.sizeY);
+
+            Glfwx::Monitor::GammaRamp ramp = m.gammaRamp();
+
+            Glfwx::Monitor::VideoMode mode = m.videoMode();
+
+            j = json({
+                { "name", name },
+                { "position", json::array({ positionX, positionY }) },
+                { "size", json::array({ sizeX, sizeY }) },
+                { "scale", json::array({ scaleX, scaleY }) },
+                { "workArea", json::array({ workArea.positionX, workArea.positionY, workArea.sizeX, workArea.sizeY }) },
+                { "gammaRamp", ramp },
+                { "videoMode", mode }
+                });
+        }
+    };
 
 }
+
 class MonitorTest : public testing::Test
 {
 public:
-    MonitorTest()
-    {
-    }
-
-    ~MonitorTest()
-    {
-    }
+    MonitorTest() = default;
+    ~MonitorTest() = default;
 
     Glfwx::Instance glfwx_;
 };
@@ -68,167 +98,135 @@ TEST_F(MonitorTest, enumerate)
 {
     std::vector<Glfwx::Monitor> monitors = Glfwx::Monitor::enumerate();
     EXPECT_GT(monitors.size(), 0);
-    int id = 0;
-    std::cerr << "[";
-    for (auto const & m : monitors)
-    {
-        if (id > 0)
-            std::cerr << ", ";
-        dump_monitor(m);
-        ++id;
-    }
-    std::cerr << "]" << std::endl;
+    std::cerr << json(monitors).dump(2) << std::endl;
 }
 
-#if 0
-        //! Returns a copy of the primary monitor.
-        //!
-        //! @sa     glfwGetPrimaryMonitor
-        static Monitor primary()
+TEST_F(MonitorTest, primary)
+{
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+    EXPECT_NE((GLFWmonitor *)monitor, nullptr);
+    std::cerr << json(monitor).dump(2) << std::endl;
+
+}
+
+TEST_F(MonitorTest, position)
+{
+    // Nothing really to test here. Just make sure it doesn't crash.
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+    int positionX = -1;
+    int positionY = -1;
+    monitor.position(&positionX, &positionY);
+    std::cerr << "[" << positionX << ", " << positionY << "]" << std::endl;
+}
+
+TEST_F(MonitorTest, workArea)
+{
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+    int positionX = -1;
+    int positionY = -1;
+    int sizeX = -1;
+    int sizeY = -1;
+    monitor.workArea(&positionX, &positionY, &sizeX, &sizeY);
+    EXPECT_NE(positionX, -1);
+    EXPECT_NE(positionY, -1);
+    EXPECT_NE(sizeX, -1);
+    EXPECT_NE(sizeY, -1);
+    std::cerr 
+        << "["
+        << positionX << ", "
+        << positionY << ", "
+        << sizeX << ", "
+        << sizeY
+        << "], " << std::endl;
+}
+
+TEST_F(MonitorTest, size)
+{
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+    int sizeX = -1;
+    int sizeY = -1;
+    monitor.size(&sizeX, &sizeY);
+    EXPECT_NE(sizeX, -1);
+    EXPECT_NE(sizeY, -1);
+    std::cerr << "[" << sizeX << ", " << sizeY << "]" << std::endl;
+}
+
+TEST_F(MonitorTest, scale)
+{
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+    float scaleX = 0.0f;
+    float scaleY = 0.0f;
+    monitor.scale(&scaleX, &scaleY);
+    EXPECT_NE(scaleX, 0.0f);
+    EXPECT_NE(scaleY, 0.0f);
+    std::cerr << "[" << scaleX << ", " << scaleY << "]" << std::endl;
+}
+
+TEST_F(MonitorTest, name)
+{
+    // Nothing really to test here. Just make sure it doesn't crash.
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+     std::string name = monitor.name();
+     std::cerr << R"(")" << name << R"(")" << std::endl;
+}
+
+TEST_F(MonitorTest, context_setContext)
+{
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+    EXPECT_EQ(monitor.context(), nullptr);
+    int x;
+    void * const expected = (void *)&x;
+    monitor.setContext(expected);
+    EXPECT_EQ(monitor.context(), expected);
+}
+
+TEST_F(MonitorTest, DISABLED_setConnectionChangedCallback)
+{
+/*
+    static void setConnectionChangedCallback(std::function<void(Monitor const &, bool)> const & cb)
+    {
+        handleConnectionChanged_ = cb;
+        if (cb)
         {
-            return Monitor(glfwGetPrimaryMonitor());
+            glfwSetMonitorCallback(onConnectionChanged);
         }
-
-        //! Returns the position of the monitor's viewport on the virtual screen.
-        //!
-        //! @param  x       Where to store the monitor x-coordinate, or nullptr
-        //! @param  y       Where to store the monitor y-coordinate, or nullptr
-        //!
-        //! @sa     glfwGetMonitorPos
-        void position(int * x, int * y) const
+        else
         {
-            glfwGetMonitorPos(monitor_, x, y);
+            glfwSetMonitorCallback(nullptr);
         }
+    }
+*/
+}
 
-        //! Returns the work area of the monitor.
-        //!
-        //! @param  x       Where to store the monitor x-coordinate, or nullptr
-        //! @param  y       Where to store the monitor y-coordinate, or nullptr
-        //! @param  width   Where to store the monitor width, or nullptr
-        //! @param  height  Where to store the monitor height, or nullptr
-        //!
-        //! @sa     glfwGetMonitorWorkarea
-        void workArea(int * x, int * y, int * width, int * height) const
-        {
-            glfwGetMonitorWorkarea(monitor_, x, y, width, height);
-        }
+TEST_F(MonitorTest, enumerateVideoModes)
+{
+    // Nothing really to test here. Just make sure it doesn't crash.
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+    std::vector<Glfwx::Monitor::VideoMode> modes = monitor.enumerateVideoModes();
+    std::cerr << json(modes).dump(2) << std::endl;
+}
 
-        //! Returns the physical size of the monitor.
-        //!
-        //! @param  width   Where to store the width, in millimetres, of the monitor's display area, or nullptr
-        //! @param  height  Where to store the height, in millimetres, of the monitor's display area, or nullptr
-        //!
-        //! @sa     glfwGetMonitorPhysicalSize
-        void size(int * width, int * height) const
-        {
-            glfwGetMonitorPhysicalSize(monitor_, width, height);
-        }
+TEST_F(MonitorTest, videoMode)
+{
+    // Nothing really to test here. Just make sure it doesn't crash.
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+    Glfwx::Monitor::VideoMode mode = monitor.videoMode();
+    std::cerr << json(mode).dump(2) << std::endl;
+}
 
-        //! Returns the content scale for the monitor.
-        //!
-        //! @param  x   Where to store the x-axis content scale, or nullptr
-        //! @param  y   Where to store the y-axis content scale, or nullptr
-        //!
-        //! @sa glfwGetMonitorContentScale
-        void scale(float *x, float * y) const
-        {
-            glfwGetMonitorContentScale(monitor_, x, y);
-        }
+TEST_F(MonitorTest, setGamma)
+{
+    // Nothing really to test here. Just make sure it doesn't crash.
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+    monitor.setGamma(2.0f);
+}
 
-        //! Returns the name of the monitor.
-        //!
-        //! @sa glfwGetMonitorName
-        std::string name() const
-        {
-            return std::string(glfwGetMonitorName(monitor_));
-        }
-
-        //! Sets the user-defined context.
-        //!
-        //! @param  context      User-defined context
-        //!
-        //! @sa     glfwSetMonitorUserPointer
-        void setContext(void * context)
-        {
-            glfwSetMonitorUserPointer(monitor_, context);
-        }
-
-        //! Returns the user-defined context.
-        //!
-        //! @sa     glfwGetMonitorUserPointer
-        void * context() const
-        {
-            return glfwGetMonitorUserPointer(monitor_);
-        }
-
-        //! Sets the function to be called when the connection status of a monitor has changed.
-        //!
-        //! @param  cb      Callback function
-        //!
-        //! @sa     glfwSetMonitorCallback
-        static void setConnectionChangedCallback(std::function<void(Monitor const &, bool)> const & cb)
-        {
-            handleConnectionChanged_ = cb;
-            if (cb)
-            {
-                glfwSetMonitorCallback(onConnectionChanged);
-            }
-            else
-            {
-                glfwSetMonitorCallback(nullptr);
-            }
-        }
-
-        //! Returns the available video modes for the monitor.
-        //!
-        //! @sa     glfwGetVideoModes
-        std::vector<VideoMode> enumerateVideoModes() const
-        {
-            int count;
-            GLFWvidmode const * modes = glfwGetVideoModes(monitor_, &count);
-            return (modes && count > 0) ? std::vector<VideoMode>(modes, modes + count) : std::vector<VideoMode>();
-        }
-
-        //! Returns the current mode of the monitor.
-        //!
-        //! @sa     glfwGetVideoMode
-        VideoMode videoMode() const
-        {
-            GLFWvidmode const * mode = glfwGetVideoMode(monitor_);
-            return mode ? *mode : VideoMode{ 0, 0, 0, 0, 0, 0 };
-        }
-
-        //! Generates a gamma ramp and sets it for the monitor.
-        //!
-        //! @param  gamma   The desired exponent.
-        //!
-        //! @sa     glfwSetGamma
-        void setGamma(float gamma)
-        {
-            glfwSetGamma(monitor_, gamma);
-        }
-
-        //! Sets the current gamma ramp for the monitor.
-        //!
-        //! @param  ramp        The gamma ramp to use.
-        //!
-        //! @sa     glfwSetGammaRamp
-        void setGammaRamp(GammaRamp const & ramp)
-        {
-            glfwSetGammaRamp(monitor_, &ramp);
-        }
-
-        //! Returns the current gamma ramp for the monitor.
-        //!
-        //! @sa     glfwGetGammaRamp
-        GammaRamp gammaRamp() const
-        {
-            GLFWgammaramp const * ramp = glfwGetGammaRamp(monitor_);
-            return ramp ? *ramp : GammaRamp{ nullptr, nullptr, nullptr, 0 };
-        }
-
-
-#endif
+TEST_F(MonitorTest, gammaRamp_setGammaRamp)
+{
+    Glfwx::Monitor monitor = Glfwx::Monitor::primary();
+    Glfwx::Monitor::GammaRamp ramp = monitor.gammaRamp();
+    monitor.setGammaRamp(ramp);
+}
 
 int main(int argc, char ** argv)
 {
