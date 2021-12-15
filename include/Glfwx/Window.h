@@ -24,127 +24,127 @@ public:
     //! @note as of GLFW 3.3.2
     enum class Hint
     {
-        FOCUSED                  = GLFW_FOCUSED,
-        ICONIFIED                = GLFW_ICONIFIED,
-        RESIZABLE                = GLFW_RESIZABLE,
-        VISIBLE                  = GLFW_VISIBLE,
-        DECORATED                = GLFW_DECORATED,
-        AUTO_ICONIFY             = GLFW_AUTO_ICONIFY,
-        FLOATING                 = GLFW_FLOATING,
-        MAXIMIZED                = GLFW_MAXIMIZED,
-        CENTER_CURSOR            = GLFW_CENTER_CURSOR,
-        TRANSPARENT_FRAMEBUFFER  = GLFW_TRANSPARENT_FRAMEBUFFER,
-        HOVERED                  = GLFW_HOVERED,
-        FOCUS_ON_SHOW            = GLFW_FOCUS_ON_SHOW,
-        RED_BITS                 = GLFW_RED_BITS,
-        GREEN_BITS               = GLFW_GREEN_BITS,
-        BLUE_BITS                = GLFW_BLUE_BITS,
-        ALPHA_BITS               = GLFW_ALPHA_BITS,
-        DEPTH_BITS               = GLFW_DEPTH_BITS,
-        STENCIL_BITS             = GLFW_STENCIL_BITS,
-        ACCUM_RED_BITS           = GLFW_ACCUM_RED_BITS,
-        ACCUM_GREEN_BITS         = GLFW_ACCUM_GREEN_BITS,
-        ACCUM_BLUE_BITS          = GLFW_ACCUM_BLUE_BITS,
-        ACCUM_ALPHA_BITS         = GLFW_ACCUM_ALPHA_BITS,
-        AUX_BUFFERS              = GLFW_AUX_BUFFERS,
-        STEREO                   = GLFW_STEREO,
-        SAMPLES                  = GLFW_SAMPLES,
-        SRGB_CAPABLE             = GLFW_SRGB_CAPABLE,
-        REFRESH_RATE             = GLFW_REFRESH_RATE,
-        DOUBLEBUFFER             = GLFW_DOUBLEBUFFER,
-        CLIENT_API               = GLFW_CLIENT_API,
-        CONTEXT_VERSION_MAJOR    = GLFW_CONTEXT_VERSION_MAJOR,
-        CONTEXT_VERSION_MINOR    = GLFW_CONTEXT_VERSION_MINOR,
-        CONTEXT_REVISION         = GLFW_CONTEXT_REVISION,
-        CONTEXT_ROBUSTNESS       = GLFW_CONTEXT_ROBUSTNESS,
-        OPENGL_FORWARD_COMPAT    = GLFW_OPENGL_FORWARD_COMPAT,
-        OPENGL_DEBUG_CONTEXT     = GLFW_OPENGL_DEBUG_CONTEXT,
-        OPENGL_PROFILE           = GLFW_OPENGL_PROFILE,
-        CONTEXT_RELEASE_BEHAVIOR = GLFW_CONTEXT_RELEASE_BEHAVIOR,
-        CONTEXT_NO_ERROR         = GLFW_CONTEXT_NO_ERROR,
-        CONTEXT_CREATION_API     = GLFW_CONTEXT_CREATION_API,
-        SCALE_TO_MONITOR         = GLFW_SCALE_TO_MONITOR,
-        COCOA_RETINA_FRAMEBUFFER = GLFW_COCOA_RETINA_FRAMEBUFFER,
-        COCOA_FRAME_NAME         = GLFW_COCOA_FRAME_NAME,
-        COCOA_GRAPHICS_SWITCHING = GLFW_COCOA_GRAPHICS_SWITCHING,
-        X11_CLASS_NAME           = GLFW_X11_CLASS_NAME,
-        X11_INSTANCE_NAME        = GLFW_X11_INSTANCE_NAME,
-        JOYSTICK_HAT_BUTTONS     = GLFW_JOYSTICK_HAT_BUTTONS,
-        COCOA_CHDIR_RESOURCES    = GLFW_COCOA_CHDIR_RESOURCES,
-        COCOA_MENUBAR            = GLFW_COCOA_MENUBAR
+        FOCUSED                  = GLFW_FOCUSED,                    //!< GLFW_FOCUSED
+        ICONIFIED                = GLFW_ICONIFIED,                  //!< GLFW_ICONIFIED
+        RESIZABLE                = GLFW_RESIZABLE,                  //!< GLFW_RESIZABLE
+        VISIBLE                  = GLFW_VISIBLE,                    //!< GLFW_VISIBLE
+        DECORATED                = GLFW_DECORATED,                  //!< GLFW_DECORATED
+        AUTO_ICONIFY             = GLFW_AUTO_ICONIFY,               //!< GLFW_AUTO_ICONIFY
+        FLOATING                 = GLFW_FLOATING,                   //!< GLFW_FLOATING
+        MAXIMIZED                = GLFW_MAXIMIZED,                  //!< GLFW_MAXIMIZED
+        CENTER_CURSOR            = GLFW_CENTER_CURSOR,              //!< GLFW_CENTER_CURSOR
+        TRANSPARENT_FRAMEBUFFER  = GLFW_TRANSPARENT_FRAMEBUFFER,    //!< GLFW_TRANSPARENT_FRAMEBUFFER
+        HOVERED                  = GLFW_HOVERED,                    //!< GLFW_HOVERED
+        FOCUS_ON_SHOW            = GLFW_FOCUS_ON_SHOW,              //!< GLFW_FOCUS_ON_SHOW
+        RED_BITS                 = GLFW_RED_BITS,                   //!< GLFW_RED_BITS
+        GREEN_BITS               = GLFW_GREEN_BITS,                 //!< GLFW_GREEN_BITS
+        BLUE_BITS                = GLFW_BLUE_BITS,                  //!< GLFW_BLUE_BITS
+        ALPHA_BITS               = GLFW_ALPHA_BITS,                 //!< GLFW_ALPHA_BITS
+        DEPTH_BITS               = GLFW_DEPTH_BITS,                 //!< GLFW_DEPTH_BITS
+        STENCIL_BITS             = GLFW_STENCIL_BITS,               //!< GLFW_STENCIL_BITS
+        ACCUM_RED_BITS           = GLFW_ACCUM_RED_BITS,             //!< GLFW_ACCUM_RED_BITS
+        ACCUM_GREEN_BITS         = GLFW_ACCUM_GREEN_BITS,           //!< GLFW_ACCUM_GREEN_BITS
+        ACCUM_BLUE_BITS          = GLFW_ACCUM_BLUE_BITS,            //!< GLFW_ACCUM_BLUE_BITS
+        ACCUM_ALPHA_BITS         = GLFW_ACCUM_ALPHA_BITS,           //!< GLFW_ACCUM_ALPHA_BITS
+        AUX_BUFFERS              = GLFW_AUX_BUFFERS,                //!< GLFW_AUX_BUFFERS
+        STEREO                   = GLFW_STEREO,                     //!< GLFW_STEREO
+        SAMPLES                  = GLFW_SAMPLES,                    //!< GLFW_SAMPLES
+        SRGB_CAPABLE             = GLFW_SRGB_CAPABLE,               //!< GLFW_SRGB_CAPABLE
+        REFRESH_RATE             = GLFW_REFRESH_RATE,               //!< GLFW_REFRESH_RATE
+        DOUBLEBUFFER             = GLFW_DOUBLEBUFFER,               //!< GLFW_DOUBLEBUFFER
+        CLIENT_API               = GLFW_CLIENT_API,                 //!< GLFW_CLIENT_API
+        CONTEXT_VERSION_MAJOR    = GLFW_CONTEXT_VERSION_MAJOR,      //!< GLFW_CONTEXT_VERSION_MAJOR
+        CONTEXT_VERSION_MINOR    = GLFW_CONTEXT_VERSION_MINOR,      //!< GLFW_CONTEXT_VERSION_MINOR
+        CONTEXT_REVISION         = GLFW_CONTEXT_REVISION,           //!< GLFW_CONTEXT_REVISION
+        CONTEXT_ROBUSTNESS       = GLFW_CONTEXT_ROBUSTNESS,         //!< GLFW_CONTEXT_ROBUSTNESS
+        OPENGL_FORWARD_COMPAT    = GLFW_OPENGL_FORWARD_COMPAT,      //!< GLFW_OPENGL_FORWARD_COMPAT
+        OPENGL_DEBUG_CONTEXT     = GLFW_OPENGL_DEBUG_CONTEXT,       //!< GLFW_OPENGL_DEBUG_CONTEXT
+        OPENGL_PROFILE           = GLFW_OPENGL_PROFILE,             //!< GLFW_OPENGL_PROFILE
+        CONTEXT_RELEASE_BEHAVIOR = GLFW_CONTEXT_RELEASE_BEHAVIOR,   //!< GLFW_CONTEXT_RELEASE_BEHAVIOR
+        CONTEXT_NO_ERROR         = GLFW_CONTEXT_NO_ERROR,           //!< GLFW_CONTEXT_NO_ERROR
+        CONTEXT_CREATION_API     = GLFW_CONTEXT_CREATION_API,       //!< GLFW_CONTEXT_CREATION_API
+        SCALE_TO_MONITOR         = GLFW_SCALE_TO_MONITOR,           //!< GLFW_SCALE_TO_MONITOR
+        COCOA_RETINA_FRAMEBUFFER = GLFW_COCOA_RETINA_FRAMEBUFFER,   //!< GLFW_COCOA_RETINA_FRAMEBUFFER
+        COCOA_FRAME_NAME         = GLFW_COCOA_FRAME_NAME,           //!< GLFW_COCOA_FRAME_NAME
+        COCOA_GRAPHICS_SWITCHING = GLFW_COCOA_GRAPHICS_SWITCHING,   //!< GLFW_COCOA_GRAPHICS_SWITCHING
+        X11_CLASS_NAME           = GLFW_X11_CLASS_NAME,             //!< GLFW_X11_CLASS_NAME
+        X11_INSTANCE_NAME        = GLFW_X11_INSTANCE_NAME,          //!< GLFW_X11_INSTANCE_NAME
+        JOYSTICK_HAT_BUTTONS     = GLFW_JOYSTICK_HAT_BUTTONS,       //!< GLFW_JOYSTICK_HAT_BUTTONS
+        COCOA_CHDIR_RESOURCES    = GLFW_COCOA_CHDIR_RESOURCES,      //!< GLFW_COCOA_CHDIR_RESOURCES
+        COCOA_MENUBAR            = GLFW_COCOA_MENUBAR               //!< GLFW_COCOA_MENUBAR
     };
 
     //! Window attributes.
     //! @note as of GLFW 3.3.2
     enum class Attribute
     {
-        FOCUSED                  = GLFW_FOCUSED,
-        ICONIFIED                = GLFW_ICONIFIED,
-        VISIBLE                  = GLFW_VISIBLE,
-        DECORATED                = GLFW_DECORATED,
-        AUTO_ICONIFY             = GLFW_AUTO_ICONIFY,
-        RESIZABLE                = GLFW_RESIZABLE,
-        FLOATING                 = GLFW_FLOATING,
-        MAXIMIZED                = GLFW_MAXIMIZED,
-        TRANSPARENT_FRAMEBUFFER  = GLFW_TRANSPARENT_FRAMEBUFFER,
-        HOVERED                  = GLFW_HOVERED,
-        FOCUS_ON_SHOW            = GLFW_FOCUS_ON_SHOW,
-        CLIENT_API               = GLFW_CLIENT_API,
-        CONTEXT_VERSION_MAJOR    = GLFW_CONTEXT_VERSION_MAJOR,
-        CONTEXT_VERSION_MINOR    = GLFW_CONTEXT_VERSION_MINOR,
-        CONTEXT_REVISION         = GLFW_CONTEXT_REVISION,
-        CONTEXT_ROBUSTNESS       = GLFW_CONTEXT_ROBUSTNESS,
-        OPENGL_FORWARD_COMPAT    = GLFW_OPENGL_FORWARD_COMPAT,
-        OPENGL_DEBUG_CONTEXT     = GLFW_OPENGL_DEBUG_CONTEXT,
-        OPENGL_PROFILE           = GLFW_OPENGL_PROFILE,
-        CONTEXT_RELEASE_BEHAVIOR = GLFW_CONTEXT_RELEASE_BEHAVIOR,
-        CONTEXT_NO_ERROR         = GLFW_CONTEXT_NO_ERROR,
-        CONTEXT_CREATION_API     = GLFW_CONTEXT_CREATION_API,
+        FOCUSED                  = GLFW_FOCUSED,                    //!< GLFW_FOCUSED
+        ICONIFIED                = GLFW_ICONIFIED,                  //!< GLFW_ICONIFIED
+        VISIBLE                  = GLFW_VISIBLE,                    //!< GLFW_VISIBLE
+        DECORATED                = GLFW_DECORATED,                  //!< GLFW_DECORATED
+        AUTO_ICONIFY             = GLFW_AUTO_ICONIFY,               //!< GLFW_AUTO_ICONIFY
+        RESIZABLE                = GLFW_RESIZABLE,                  //!< GLFW_RESIZABLE
+        FLOATING                 = GLFW_FLOATING,                   //!< GLFW_FLOATING
+        MAXIMIZED                = GLFW_MAXIMIZED,                  //!< GLFW_MAXIMIZED
+        TRANSPARENT_FRAMEBUFFER  = GLFW_TRANSPARENT_FRAMEBUFFER,    //!< GLFW_TRANSPARENT_FRAMEBUFFER
+        HOVERED                  = GLFW_HOVERED,                    //!< GLFW_HOVERED
+        FOCUS_ON_SHOW            = GLFW_FOCUS_ON_SHOW,              //!< GLFW_FOCUS_ON_SHOW
+        CLIENT_API               = GLFW_CLIENT_API,                 //!< GLFW_CLIENT_API
+        CONTEXT_VERSION_MAJOR    = GLFW_CONTEXT_VERSION_MAJOR,      //!< GLFW_CONTEXT_VERSION_MAJOR
+        CONTEXT_VERSION_MINOR    = GLFW_CONTEXT_VERSION_MINOR,      //!< GLFW_CONTEXT_VERSION_MINOR
+        CONTEXT_REVISION         = GLFW_CONTEXT_REVISION,           //!< GLFW_CONTEXT_REVISION
+        CONTEXT_ROBUSTNESS       = GLFW_CONTEXT_ROBUSTNESS,         //!< GLFW_CONTEXT_ROBUSTNESS
+        OPENGL_FORWARD_COMPAT    = GLFW_OPENGL_FORWARD_COMPAT,      //!< GLFW_OPENGL_FORWARD_COMPAT
+        OPENGL_DEBUG_CONTEXT     = GLFW_OPENGL_DEBUG_CONTEXT,       //!< GLFW_OPENGL_DEBUG_CONTEXT
+        OPENGL_PROFILE           = GLFW_OPENGL_PROFILE,             //!< GLFW_OPENGL_PROFILE
+        CONTEXT_RELEASE_BEHAVIOR = GLFW_CONTEXT_RELEASE_BEHAVIOR,   //!< GLFW_CONTEXT_RELEASE_BEHAVIOR
+        CONTEXT_NO_ERROR         = GLFW_CONTEXT_NO_ERROR,           //!< GLFW_CONTEXT_NO_ERROR
+        CONTEXT_CREATION_API     = GLFW_CONTEXT_CREATION_API        //!< GLFW_CONTEXT_CREATION_API
     };
 
     //! @name Client API attribute values
     //! @note as of GLFW 3.3.2
     //! @sa CLIENT_API
     //!@{
-    static int constexpr NO_API        = GLFW_NO_API;
-    static int constexpr OPENGL_API    = GLFW_OPENGL_API;
-    static int constexpr OPENGL_ES_API = GLFW_OPENGL_ES_API;
+    static int constexpr NO_API        = GLFW_NO_API;           //!< GLFW_NO_API
+    static int constexpr OPENGL_API    = GLFW_OPENGL_API;       //!< GLFW_OPENGL_API
+    static int constexpr OPENGL_ES_API = GLFW_OPENGL_ES_API;    //!< GLFW_OPENGL_ES_API
     //!@}
 
     //! @name Context robustness attribute values
     //! @note as of GLFW 3.3.2
     //! @sa CONTEXT_ROBUSTNESS
     //!@{
-    static int constexpr NO_ROBUSTNESS         = GLFW_NO_ROBUSTNESS;
-    static int constexpr NO_RESET_NOTIFICATION = GLFW_NO_RESET_NOTIFICATION;
-    static int constexpr LOSE_CONTEXT_ON_RESET = GLFW_LOSE_CONTEXT_ON_RESET;
+    static int constexpr NO_ROBUSTNESS         = GLFW_NO_ROBUSTNESS;            //!< GLFW_NO_ROBUSTNESS
+    static int constexpr NO_RESET_NOTIFICATION = GLFW_NO_RESET_NOTIFICATION;    //!< GLFW_NO_RESET_NOTIFICATION
+    static int constexpr LOSE_CONTEXT_ON_RESET = GLFW_LOSE_CONTEXT_ON_RESET;    //!< GLFW_LOSE_CONTEXT_ON_RESET
     //!@}
 
     //! @name OpenGL profile attribute values
     //! @note as of GLFW 3.3.2
     //! @sa OPENGL_PROFILE
     //!@{
-    static int constexpr OPENGL_ANY_PROFILE    = GLFW_OPENGL_ANY_PROFILE;
-    static int constexpr OPENGL_CORE_PROFILE   = GLFW_OPENGL_CORE_PROFILE;
-    static int constexpr OPENGL_COMPAT_PROFILE = GLFW_OPENGL_COMPAT_PROFILE;
+    static int constexpr OPENGL_ANY_PROFILE    = GLFW_OPENGL_ANY_PROFILE;       //!< GLFW_OPENGL_ANY_PROFILE
+    static int constexpr OPENGL_CORE_PROFILE   = GLFW_OPENGL_CORE_PROFILE;      //!< GLFW_OPENGL_CORE_PROFILE
+    static int constexpr OPENGL_COMPAT_PROFILE = GLFW_OPENGL_COMPAT_PROFILE;    //!< GLFW_OPENGL_COMPAT_PROFILE
     //!@}
 
     //! @name Context release behavior attribute values
     //! @note as of GLFW 3.3.2
     //! @sa CONTEXT_RELEASE_BEHAVIOR
     //!@{
-    static int constexpr ANY_RELEASE_BEHAVIOR   = GLFW_ANY_RELEASE_BEHAVIOR;
-    static int constexpr RELEASE_BEHAVIOR_FLUSH = GLFW_RELEASE_BEHAVIOR_FLUSH;
-    static int constexpr RELEASE_BEHAVIOR_NONE  = GLFW_RELEASE_BEHAVIOR_NONE;
+    static int constexpr ANY_RELEASE_BEHAVIOR   = GLFW_ANY_RELEASE_BEHAVIOR;    //!< GLFW_ANY_RELEASE_BEHAVIOR
+    static int constexpr RELEASE_BEHAVIOR_FLUSH = GLFW_RELEASE_BEHAVIOR_FLUSH;  //!< GLFW_RELEASE_BEHAVIOR_FLUSH
+    static int constexpr RELEASE_BEHAVIOR_NONE  = GLFW_RELEASE_BEHAVIOR_NONE;   //!< GLFW_RELEASE_BEHAVIOR_NONE
     //!@}
 
     //! @name Context creation API attribute values
     //! @note as of GLFW 3.3.2
     //! @sa CONTEXT_CREATION_API
     //!@{
-    static int constexpr NATIVE_CONTEXT_API = GLFW_NATIVE_CONTEXT_API;
-    static int constexpr EGL_CONTEXT_API    = GLFW_EGL_CONTEXT_API;
-    static int constexpr OSMESA_CONTEXT_API = GLFW_OSMESA_CONTEXT_API;
+    static int constexpr NATIVE_CONTEXT_API = GLFW_NATIVE_CONTEXT_API;  //!< GLFW_NATIVE_CONTEXT_API
+    static int constexpr EGL_CONTEXT_API    = GLFW_EGL_CONTEXT_API;     //!< GLFW_EGL_CONTEXT_API
+    static int constexpr OSMESA_CONTEXT_API = GLFW_OSMESA_CONTEXT_API;  //!< GLFW_OSMESA_CONTEXT_API
     //!@}
 
     //! Constructor.
